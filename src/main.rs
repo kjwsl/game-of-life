@@ -1,11 +1,11 @@
+use game_of_life::Canvas;
+
 fn main() {
-    let ms = std::env::args().nth(1).unwrap_or("1000".to_string()).parse().unwrap();
-    let mut canvas = game_of_life::Canvas::new(100, 20);
-    canvas.set_cell(25, 4, game_of_life::Cell::Alive);
-    canvas.set_cell(25, 5, game_of_life::Cell::Alive);
-    canvas.set_cell(25, 6, game_of_life::Cell::Alive);
-    canvas.set_cell(24, 5, game_of_life::Cell::Alive);
-    canvas.set_cell(26, 6, game_of_life::Cell::Alive);
+    let ms = 300;
+    let canvas_path = std::env::args().nth(1).expect("Specify canvas path");
+    let canvas_file = std::fs::read_to_string(canvas_path).expect("Failed to read canvas path");
+
+    let mut canvas = Canvas::from_str(&canvas_file);
 
     loop {
         print!("\x1B[2J\x1B[H");

@@ -20,6 +20,23 @@ impl Canvas {
         }
     }
 
+    pub fn from_str(input: &str) -> Self {
+        let height = input.lines().count();
+        let width = input.lines().map(|l| l.len()).max().unwrap();
+
+        let mut canvas = Self::new(width, height);
+
+        for (y, line) in input.lines().enumerate() {
+            for (x, c) in line.chars().enumerate() {
+                if c == 'O' {
+                    canvas.set_cell(x, y, Cell::Alive);
+                }
+            }
+        }
+
+        canvas
+    }
+
     pub fn get_cell(&self, x: usize, y: usize) -> Option<Cell> {
         if x >= self.width || y >= self.height {
             None
