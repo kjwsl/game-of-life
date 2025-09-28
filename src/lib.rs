@@ -9,6 +9,7 @@ pub struct Canvas {
     pub width: usize,
     pub height: usize,
     pub cells: Vec<Cell>,
+    pub is_infinite: bool,
 }
 
 impl Canvas {
@@ -17,7 +18,12 @@ impl Canvas {
             width,
             height,
             cells: vec![Cell::Dead; width * height],
+            is_infinite: false,
         }
+    }
+
+    pub fn set_infinite(&mut self, is_infinite: bool) {
+        self.is_infinite = is_infinite;
     }
 
     pub fn from_str(input: &str) -> Self {
@@ -90,9 +96,23 @@ impl Canvas {
                 if dx == 0 && dy == 0 {
                     continue;
                 }
-                if self.get_cell((x as i32 + dx) as usize, (y as i32 + dy) as usize)
-                    == Some(Cell::Alive)
-                {
+                let cell = match self.is_infinite {
+                    true => {
+                        let new_x = (x as i32 + dx + self.width as i32) % self.width as i32;
+                        let new_y = (y as i32 + dy + self.height as i32) % self.height as i32;
+                        self.get_cell(new_x as usize, new_y as usize)
+                    }
+                    false => {
+                        if x as i32 + dx < 0 || x as i32 + dx >= self.width as i32 {
+                            None
+                        } else if y as i32 + dy < 0 || y as i32 + dy >= self.height as i32 {
+                            None
+                        } else {
+                            self.get_cell((x as i32 + dx) as usize, (y as i32 + dy) as usize)
+                        }
+                    }
+                };
+                if cell == Some(Cell::Alive) {
                     count += 1;
                 }
             }
